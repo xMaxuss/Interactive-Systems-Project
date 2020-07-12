@@ -1,0 +1,261 @@
+int buttonPin= A0;
+int led1=6;
+int led2=7;
+int led3=8;
+int led4=9;
+int led5=10;
+int led6=11;
+int led7=12;
+int led8=13;
+
+int temp=0;
+
+int rnd=0;
+
+int getter=0;
+
+int timer=0;
+
+int timercap=5000;
+
+int delaycap=1000;
+
+int success=0;
+  
+  
+
+void setup()
+{
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
+  pinMode(led5, OUTPUT);
+  pinMode(led6, OUTPUT);
+  pinMode(led7, OUTPUT);
+  pinMode(led8, OUTPUT);
+  Serial.begin(9600);
+  
+  randomSeed(analogRead(1));
+  rnd=random(1,9);
+
+
+  digitalWrite(led8, HIGH);
+  delay(500);
+  digitalWrite(led7, HIGH);
+  delay(500);
+  digitalWrite(led6, HIGH);
+  delay(500);
+  digitalWrite(led5, HIGH);
+  delay(500);
+  digitalWrite(led4, HIGH);
+  delay(500);
+  digitalWrite(led3, HIGH);
+  delay(500);
+  digitalWrite(led2, HIGH);
+  delay(500);
+  digitalWrite(led1, HIGH);
+  delay(500);
+  
+  
+}
+
+void loop()
+{ 
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+  digitalWrite(led5, LOW);
+  digitalWrite(led6, LOW);
+  digitalWrite(led7, LOW);
+  digitalWrite(led8, LOW);
+  
+  
+  success=0;
+  
+  logic();
+}
+
+void logic(){
+  getter=0;
+  delay(delaycap);
+  if (delaycap<250){delaycap=250;}else{delaycap-=10;}
+  thereshallbelight();
+  while(success == 0){
+    check();
+    if (timer>timercap){end();}
+    timer+=10;
+    delay(10);
+  }
+  success=0;
+  if (timercap<500){timercap=500;}else{timercap-=50;}
+  timer=0;
+  
+}
+
+
+void check(){
+
+  temp=analogRead(buttonPin);
+//  Serial.println(temp);
+  if (temp < 50)
+  {
+    getter=0; 
+  }
+  else if (temp < 80)
+  {
+  	getter=1;
+  }
+  else if (temp < 115)
+  {
+  	getter=2;
+  }
+  else if (temp < 150)
+    {
+  	getter=3;
+  }
+  else if (temp < 185)
+    {
+  	getter=4;
+  }
+  else if (temp < 240)
+    {
+  	getter=5;
+  }
+  else if (temp < 320)
+    {
+  	getter=6;
+  }
+  else if (temp < 500)
+    {
+  	getter=7;
+  }
+  else if (temp < 1050)
+    {
+  	getter=8;
+  }
+  
+  if (getter != 0)
+  {
+    if (getter == rnd){
+    	rnd=random(1,9);
+      	success=1;
+    }else{
+    		end();
+    }
+    
+  }
+
+}
+
+void thereshallbelight(){
+    if (rnd == 8) {
+    digitalWrite(led1, HIGH);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 7) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, HIGH);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 6) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, HIGH);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 5) {
+    digitalWrite(6, LOW);
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    digitalWrite(9, HIGH);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    digitalWrite(12, LOW);
+    digitalWrite(13, LOW);
+  }
+  if (rnd == 4) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, HIGH);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 3) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, HIGH);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 2) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, HIGH);
+    digitalWrite(led8, LOW);
+  }
+  if (rnd == 1) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, HIGH);
+  }
+}
+
+
+void end(){
+
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+  digitalWrite(led3, HIGH);
+  digitalWrite(led4, HIGH);
+  digitalWrite(led5, HIGH);
+  digitalWrite(led6, HIGH);
+  digitalWrite(led7, HIGH);
+  digitalWrite(led8, HIGH);
+  delay(1000);
+  
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+  digitalWrite(led5, LOW);
+  digitalWrite(led6, LOW);
+  digitalWrite(led7, LOW);
+  digitalWrite(led8, LOW);
+  delay(1000);
+  
+  while(true){
+  }
+  
+}
