@@ -1,0 +1,814 @@
+#include "pitches.h"
+
+int buttonPin= A0;
+int led1=9;
+int led2=10;
+int led3=11;
+int led4=12;
+
+int speaker=8;
+
+int pinA= 3;
+int pinB= 7;
+int pinC= A3;
+int pinD= A4;
+int pinE= 13;
+int pinF= 4;
+int pinG= A2;
+
+int D1= 2;
+int D2= 5;
+int D3= 6;
+int D4= A1;
+
+
+
+int temp=0;
+
+int rnd=0;
+
+int getter=0;
+
+int timer=0;
+
+int timercap=5000;
+
+int delaycap=1000;
+
+int success=0;
+
+int counter=0;
+  
+  
+
+void setup()
+{
+  
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
+  
+  pinMode(pinA, OUTPUT);     
+  pinMode(pinB, OUTPUT);     
+  pinMode(pinC, OUTPUT);     
+  pinMode(pinD, OUTPUT);     
+  pinMode(pinE, OUTPUT);     
+  pinMode(pinF, OUTPUT);     
+  pinMode(pinG, OUTPUT);   
+  pinMode(D1, OUTPUT);  
+  pinMode(D2, OUTPUT);  
+  pinMode(D3, OUTPUT);  
+  pinMode(D4, OUTPUT);
+
+  //pinMode(A5, INPUT);
+  
+  //Serial.begin(9600);
+  randomSeed(analogRead(A5));
+  rnd=random(1,5);
+  
+  digitalWrite(led4, HIGH);
+  tone(speaker, NOTE_C3);
+  delay(500);
+  tone(speaker, NOTE_D3);
+  delay(500);
+  digitalWrite(led3, HIGH);
+  tone(speaker, NOTE_E3);
+  delay(500);
+  tone(speaker, NOTE_F3);
+  delay(500);
+  digitalWrite(led2, HIGH);
+  tone(speaker, NOTE_G3);
+  delay(500);
+  tone(speaker, NOTE_A3);
+  delay(500);
+  digitalWrite(led1, HIGH);
+  tone(speaker, NOTE_B3);
+  delay(500);
+  tone(speaker, NOTE_C4);
+  delay(500);
+  noTone(speaker);
+  
+  
+}
+
+void loop()
+{ 
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+
+  success=0;
+  
+  logic();
+}
+
+void logic(){
+  
+  getter=0;
+  for(int i=delaycap; i>0; i-=5){
+    updateCounter();
+    }
+  if (delaycap<300){delaycap=300;}else{delaycap-=10;}
+  thereshallbelight();
+  while(success == 0){
+    check();
+    if (timer>timercap){end();}
+    timer+=5;
+    updateCounter();
+  }
+  success=0;
+  if (timercap<500){timercap=500;}else{timercap-=20;}
+  timer=0;
+  
+}
+
+
+void check(){
+
+  temp=analogRead(buttonPin);
+  //Serial.println(temp);
+  if (temp < 150)
+  {
+    getter=0; 
+  }
+  else if (temp < 310)
+  {
+    getter=1;
+  }
+  else if (temp < 500)
+  {
+    getter=2;
+  }
+  else if (temp < 800)
+    {
+    getter=3;
+  }
+  else if (temp < 1200)
+    {
+    getter=4;
+  }
+  
+  if (getter != 0)
+  {
+    if (getter == rnd){
+      rnd=random(1,5);
+        success=1;
+        tone(speaker,NOTE_C4,200);
+        counter+=1;
+    }else{
+        end();
+    }
+    
+  }
+
+}
+
+void thereshallbelight(){
+    
+  if (rnd == 4) {
+    digitalWrite(led1, HIGH);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    tone(speaker, NOTE_A3);
+  }
+  if (rnd == 3) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, HIGH);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    tone(speaker, NOTE_G3);
+  }
+  if (rnd == 2) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, HIGH);
+    digitalWrite(led4, LOW);
+    tone(speaker, NOTE_E3);
+  }
+  if (rnd == 1) {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, HIGH);
+    tone(speaker, NOTE_C3);
+    
+  }
+}
+
+void updateCounter(){
+  int d1,d2,d3,d4=0;
+  int erg=0;
+
+  d4=counter % 10;
+  erg=counter / 10;
+  d3=erg % 10;
+  erg=erg / 10;
+  d2=erg % 10;
+  erg=erg / 10;
+  d1=erg % 10;
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+  
+  drawD1(d1);
+  drawD2(d2);
+  drawD3(d3);
+  drawD4(d4);
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);  
+
+  delay(1);
+  
+
+  }
+
+
+void drawD1(int x){
+  if (x==0){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send0();    
+    }
+  if (x==1){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send1();    
+    }
+  if (x==2){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send2();    
+    }
+  if (x==3){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send3();    
+    }
+  if (x==4){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send4();    
+    }
+  if (x==5){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send5();    
+    }
+  if (x==6){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send6();    
+    }
+  if (x==7){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send7();    
+    }
+  if (x==8){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send8();    
+    }
+  if (x==9){
+      digitalWrite(D1, HIGH);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send9();    
+    }  
+  }
+
+void drawD2(int x){
+  if (x==0){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send0();    
+    }
+  if (x==1){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send1();    
+    }
+  if (x==2){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send2();    
+    }
+  if (x==3){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send3();    
+    }
+  if (x==4){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send4();    
+    }
+  if (x==5){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send5();    
+    }
+  if (x==6){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send6();    
+    }
+  if (x==7){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send7();    
+    }
+  if (x==8){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send8();    
+    }
+  if (x==9){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, HIGH);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, LOW);
+      send9();    
+    }  
+  }
+
+void drawD3(int x){
+  if (x==0){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send0();    
+    }
+  if (x==1){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send1();    
+    }
+  if (x==2){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send2();    
+    }
+  if (x==3){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send3();    
+    }
+  if (x==4){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send4();    
+    }
+  if (x==5){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send5();    
+    }
+  if (x==6){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send6();    
+    }
+  if (x==7){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send7();    
+    }
+  if (x==8){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send8();    
+    }
+  if (x==9){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, HIGH);
+      digitalWrite(D4, LOW);
+      send9();    
+    }  
+  }
+
+void drawD4(int x){
+  if (x==0){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send0();    
+    }
+  if (x==1){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send1();    
+    }
+  if (x==2){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send2();    
+    }
+  if (x==3){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send3();    
+    }
+  if (x==4){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send4();    
+    }
+  if (x==5){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send5();    
+    }
+  if (x==6){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send6();    
+    }
+  if (x==7){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send7();    
+    }
+  if (x==8){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send8();    
+    }
+  if (x==9){
+      digitalWrite(D1, LOW);
+      digitalWrite(D2, LOW);
+      digitalWrite(D3, LOW);
+      digitalWrite(D4, HIGH);
+      send9();    
+    }
+  }
+
+void send0(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, HIGH);
+
+  delay(1);
+  
+  }
+
+
+void send1(){
+  
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+
+  delay(1);
+  
+  }
+
+void send2(){
+  
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send3(){
+  
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send4(){
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send5(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send6(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send7(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+
+  delay(1);
+  
+  }
+
+void send8(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void send9(){
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);
+
+  delay(1);
+  
+  }
+
+void oups(){
+  
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+  
+  digitalWrite(D1, HIGH);
+  digitalWrite(D2, LOW);
+  digitalWrite(D3, LOW);
+  digitalWrite(D4, LOW);
+  
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, HIGH);
+
+  delay(1);
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+  
+  
+  digitalWrite(D1, LOW);
+  digitalWrite(D2, HIGH);
+  digitalWrite(D3, LOW);
+  digitalWrite(D4, LOW);
+  
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, HIGH);   
+
+  delay(1);
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+
+  
+  digitalWrite(D1, LOW);
+  digitalWrite(D2, LOW);
+  digitalWrite(D3, HIGH);
+  digitalWrite(D4, LOW); 
+  //2
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, LOW);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, LOW);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);     
+  
+  delay(1);
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+  
+  digitalWrite(D1, LOW);
+  digitalWrite(D2, LOW);
+  digitalWrite(D3, LOW);
+  digitalWrite(D4, HIGH); 
+
+  digitalWrite(pinA, LOW);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, LOW);   
+  digitalWrite(pinD, LOW);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, LOW);   
+  digitalWrite(pinG, LOW);   
+
+  delay(1);
+
+  digitalWrite(pinA, HIGH);   
+  digitalWrite(pinB, HIGH);   
+  digitalWrite(pinC, HIGH);   
+  digitalWrite(pinD, HIGH);   
+  digitalWrite(pinE, HIGH);   
+  digitalWrite(pinF, HIGH);   
+  digitalWrite(pinG, HIGH);
+
+
+  delay(1);
+  
+  }
+
+
+void end(){
+
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+  digitalWrite(led3, HIGH);
+  digitalWrite(led4, HIGH);
+  noTone(speaker);
+  tone(speaker,NOTE_DS3);
+  for(int i=0;i<240;i++){
+    oups();
+    }
+  tone(speaker,NOTE_B2);
+  for(int i=0;i<60;i++){
+    oups();
+    }
+  tone(speaker,NOTE_AS2);
+  for(int i=0;i<60;i++){
+    oups();
+    }
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+  noTone(speaker);
+  for(int i=0;i<200;i++){
+    oups();
+    }
+  while(true){
+    updateCounter();
+  }
+  
+}
