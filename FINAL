@@ -1,0 +1,382 @@
+#include "pitches.h"
+
+// assign all LED pins fitting names
+int led1=3;
+int led2=5;
+int led3=7;
+int led4=9;
+int led5=2;
+int led6=4;
+int led7=6;
+int led8=8;
+
+// assign speaker pin fitting name
+int speaker=12;
+
+// assign the inputs/outputs of contact zones fitting names
+int signals=11;
+int finger1=A5;
+int finger2=A4;
+int finger3=A3;
+int finger4=A2;
+
+// temporary integers for conatct calculation
+int temp1=0;
+int temp2=0;
+int temp3=0;
+int temp4=0;
+
+// needed for aborting program if multiple contacts are touching
+int multi=0;
+
+// random number
+int rnd=0;
+
+// transform contact zone signal into useable number
+int getter=0;
+
+// responsible for input window of user
+int timer=0;
+
+// maximum user inout window; default: 5000ms. Decreases
+// as game goes on. Can be adjusted here.
+int timercap=5000;
+
+// maximum delay between LEDs; default: 1000ms. Decreases
+// as game goes on. Can be adjusted here.
+int delaycap=1000;
+
+// responsible for tracking wether correct input was made
+int success=0;
+
+// score can be seen on PC (better solution would be to
+// use an integrated display, but it would need 11 pins on
+// the Arduino, but I do not have that many left)
+int score=0;
+  
+
+void setup()
+{
+  // all LEDs are OUTPUT
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
+  pinMode(led5, OUTPUT);
+  pinMode(led6, OUTPUT);
+  pinMode(led7, OUTPUT);
+  pinMode(led8, OUTPUT);
+
+  // the thumb/palm of hand will act as a signal sender,
+  // the fingers will act as receivers
+  pinMode(signals, OUTPUT);
+  pinMode(finger1, INPUT);
+  pinMode(finger2, INPUT);
+  pinMode(finger3, INPUT);
+  pinMode(finger4, INPUT);
+
+  // initialize Serial (for the score) and random number generator
+  // (its reading from an unconnected pin, A0, to ensure a random
+  // number)
+  Serial.begin(9600);
+  randomSeed(analogRead(A0));
+  rnd=random(1,9);
+
+  // light up all LEDs one by one, accompanied by a tone
+  digitalWrite(led1, HIGH);
+  tone(speaker, NOTE_C3);
+  delay(500);
+  digitalWrite(led2, HIGH);
+  tone(speaker, NOTE_D3);
+  delay(500);
+  digitalWrite(led3, HIGH);
+  tone(speaker, NOTE_E3);
+  delay(500);
+  digitalWrite(led4, HIGH);
+  tone(speaker, NOTE_F3);
+  delay(500);
+  digitalWrite(led5, HIGH);
+  tone(speaker, NOTE_G3);
+  delay(500);
+  digitalWrite(led6, HIGH);
+  tone(speaker, NOTE_A3);
+  delay(500);
+  digitalWrite(led7, HIGH);
+  tone(speaker, NOTE_B3);
+  delay(500);
+  digitalWrite(led8, HIGH);
+  tone(speaker, NOTE_C4);
+  delay(500);
+  noTone(speaker);
+
+  // start sending signals through the thumb/palm of hand. This
+  // will not turn off for the remainder of the program.
+  digitalWrite(signals, HIGH);
+  
+}
+
+void loop()
+{ 
+  // turn all LEDs off again
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+  digitalWrite(led5, LOW);
+  digitalWrite(led6, LOW);
+  digitalWrite(led7, LOW);
+  digitalWrite(led8, LOW);
+
+  // reset "success", it is used later
+  success=0;
+
+  // jump to "logic()"
+  logic();
+}
+
+void logic(){
+  // basic functionality: every time this function is called, 
+  // decrease both the delay between LEDs lighting up and
+  // the user input window. It's also responsible for the delay
+  // itself and calls "thereshallbelight()".
+  getter=0;
+  delay(delaycap);
+  // to prevent the game from becoming unplayable:
+  // minimum delay = 300ms.
+  if (delaycap<300){delaycap=300;}else{delaycap-=10;}
+  thereshallbelight();
+  while(success == 0){
+    check();
+    if (timer>timercap){end();}
+    timer+=10;
+    delay(10);
+  }
+  success=0;
+  // to prevent the game from becoming unplayable:
+  // minimum input window = 500ms.
+  if (timercap<500){timercap=500;}else{timercap-=20;}
+  timer=0;
+  
+}
+
+
+void check(){
+  // check if multiple figners are touched. If yes ->
+  // end programm (it technically does not end, but rather
+  // goes into an infinite loop. An Arduino programm can not
+  // be stopped.)
+  multi=0;
+  temp1=analogRead(finger1);
+  temp2=analogRead(finger2);
+  temp3=analogRead(finger3);
+  temp4=analogRead(finger4);
+
+  // Debug info about current through contact zones
+  //Serial.print("( ");
+  //Serial.print(temp1);
+  //Serial.print(" , ");
+  //Serial.print(temp2);
+  //Serial.print(" , ");
+  //Serial.print(temp3);
+  //Serial.print(" , ");
+  //Serial.print(temp4);
+  //Serial.println(" )");
+  
+  if (temp1 > 300){multi+=1;}
+  if (temp2 > 300){multi+=1;}
+  if (temp3 > 300){multi+=1;}
+  if (temp4 > 300){multi+=1;}
+  if (multi > 1){ end();}
+
+  // check what contact zones were used
+  if (temp1 < 300  &&  temp2 < 300 && temp3 < 300 && temp4 < 300)
+  {
+    getter=0; 
+  }
+  else if (temp1 > 300  &&  temp1 < 650)
+  {
+    getter=1;
+  }
+  else if (temp2 > 300  &&  temp2 < 650)
+  {
+    getter=2;
+  }
+  else if (temp3 > 300  &&  temp3 < 650)
+    {
+    getter=3;
+  }
+  else if (temp4 > 300  &&  temp4 < 650)
+    {
+    getter=4;
+  }
+  else if (temp1 > 650)
+    {
+    getter=5;
+  }
+  else if (temp2 > 650)
+    {
+    getter=6;
+  }
+  else if (temp3 > 650)
+    {
+    getter=7;
+  }
+  else if (temp4 > 650)
+    {
+    getter=8;
+  }
+
+  // if correct contact points were connected, continue
+  // programm. If not, call "end()".
+  if (getter != 0)
+  {
+    if (getter == rnd){
+      rnd=random(1,9);
+        success=1;
+        score+=1;
+        tone(speaker,NOTE_C5,200);
+    }else{
+        end();
+    }
+    
+  }
+
+}
+
+void thereshallbelight(){
+  // lights up a random LED, turns off all others
+  switch(rnd)
+  {
+  
+  case 8: 
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, HIGH);
+    tone(speaker, NOTE_C4);
+    break;
+    
+  case 7:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, HIGH);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_B3);
+    break;
+  
+  case 6:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, HIGH);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_A3);
+    break;
+  
+  case 5:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, HIGH);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_G3);
+    break;
+  
+  case 4:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, HIGH);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_F3);
+    break;
+    
+  case 3:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, HIGH);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_E3);
+    break;
+    
+  case 2:
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, HIGH);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_D3);
+    break;
+    
+  case 1:
+    digitalWrite(led1, HIGH);
+    digitalWrite(led2, LOW);
+    digitalWrite(led3, LOW);
+    digitalWrite(led4, LOW);
+    digitalWrite(led5, LOW);
+    digitalWrite(led6, LOW);
+    digitalWrite(led7, LOW);
+    digitalWrite(led8, LOW);
+    tone(speaker, NOTE_C3);
+    break;
+  }
+}
+
+void end(){
+  // play short "loss" jingle, keep displaying score in
+  // Serial output
+  digitalWrite(led1, HIGH);
+  digitalWrite(led2, HIGH);
+  digitalWrite(led3, HIGH);
+  digitalWrite(led4, HIGH);
+  digitalWrite(led5, HIGH);
+  digitalWrite(led6, HIGH);
+  digitalWrite(led7, HIGH);
+  digitalWrite(led8, HIGH);
+  noTone(speaker);
+  tone(speaker,NOTE_DS3);
+  delay(1200);
+  tone(speaker,NOTE_B2);
+  delay(300);
+  tone(speaker,NOTE_AS2);
+  delay(300);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  digitalWrite(led3, LOW);
+  digitalWrite(led4, LOW);
+  digitalWrite(led5, LOW);
+  digitalWrite(led6, LOW);
+  digitalWrite(led7, LOW);
+  digitalWrite(led8, LOW);
+  noTone(speaker);
+  delay(1000);
+  while(true){
+    Serial.println(score);
+    delay(10000);
+  }
+  
+}
