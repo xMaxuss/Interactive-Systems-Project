@@ -6,7 +6,7 @@ Materials needed:
 This is the system that I will use to tell you, what part belongs where. I will first take a part, for example, "Wire", and then give pairs, like (a 1). Since the breadboard contains the letters a-j and numbers 1-64, each spot can be represented by a pair. Should I write "(- a 1)", this means that the part has to be inserted in the "-" part in line 1 on the side of a. Should I write "(- j 1)", this means that the part is inserted into the opposite side of the breadboard. Same goes for "+". Finally, should I write "(Arduino 1)", this means that the part is inserted into the Arduino on pin 1. With this out of the way, here is the construction plan:
 
 1)  4-digit-7-segment-display: (c 1),(c 2),(c 3),(c 4),(c 5),(c 6),(g 1),(g 2),(g 3),(g 4),(g 5),(g 6)
-2)  LED 1: (- a 17),(b 17)
+2)  LED 1: (- a 17),(b 17) (for LEDs, make sure the cathode (shorter foot) is placed into -!)
 3)  LED 2: (- a 21),(b 21)
 4)  LED 3: (- a 25),(b 25)
 5)  LED 4: (- a 29),(b 29)
