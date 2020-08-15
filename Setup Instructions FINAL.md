@@ -27,3 +27,5 @@ This is the system that I will use to tell you, what part belongs where. I will 
 21) 10k resistor:(e 21),(e 25)
 22) 220 resistor:(b 21),(a 26)
 23) Piezo: (g 28),(f 30)
+24) Wire 1: (- a 3),(- j 3)
+25) Wire 2:
